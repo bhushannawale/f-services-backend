@@ -7,6 +7,7 @@ from rest_framework.decorators import api_view
 from django.http.response import JsonResponse
 from server import auth
 from django.contrib.auth.hashers import make_password, check_password
+from server import err as errors
 
 @api_view(['GET'])
 def get_all_consumers(request):
@@ -18,7 +19,7 @@ def get_all_consumers(request):
             res_list.append(serialized.data)
         return Response(res_list)
     except :
-        err = serializer.ErrorSerializer("Error", "Database Fetching Error")
+        err = errors.ErrorSerializer("Error", "Database Fetching Error")
         return JsonResponse({err.Name:err.Error})
 
 
@@ -29,7 +30,7 @@ def get_one(request, id):
         serialized = serializer.ConsumerSerializer(consumer)
         return Response(serialized.data)
     except :
-        err = serializer.ErrorSerializer("Error", "User Not Exists")
+        err = errors.ErrorSerializer("Error", "User Not Exists")
         return JsonResponse({err.Name:err.Error})
 
 
@@ -41,10 +42,10 @@ def create_consumer(request):
             serialized.save(password=make_password(request.data['password']))
             return Response(serialized.data)
         else:
-            err = serializer.ErrorSerializer("Error", serialized.errors)
+            err = errors.ErrorSerializer("Error", serialized.errors)
             return JsonResponse({err.Name:err.Error})
     except :
-        err = serializer.ErrorSerializer("Error", "Data Error")
+        err = errors.ErrorSerializer("Error", "Data Error")
         return JsonResponse({err.Name:err.Error})
 
 
@@ -58,12 +59,12 @@ def update_consumer(request, id):
                 serialized.update(consumer, serialized.data)
                 return Response(serialized.data)
             else:
-                err = serializer.ErrorSerializer("Error", "User Not Exists")
+                err = errors.ErrorSerializer("Error", "User Not Exists")
                 return JsonResponse({err.Name:err.Error})
         else:
             return Response(serialized.errors)
     except :
-        err = serializer.ErrorSerializer("Error", "Data Error")
+        err = errors.ErrorSerializer("Error", "Data Error")
         return JsonResponse({err.Name:err.Error})
 
 @api_view(['DELETE'])
@@ -74,7 +75,7 @@ def delete_consumer(request, id):
         consumer.save()
         return Response(serializer.ConsumerSerializer(consumer).data)
     except :
-        err = serializer.ErrorSerializer("Error", "User Not Exists")
+        err = errors.ErrorSerializer("Error", "User Not Exists")
         return JsonResponse({err.Name:err.Error})
 
 @api_view(['POST'])
@@ -88,11 +89,11 @@ def login(request):
                 token = auth.create_token('consumer', consumer.id, consumer.email)
                 return JsonResponse({'Token': token.decode('utf-8')})
             else:
-                err = serializer.ErrorSerializer("Error", "Email or Password is incorrect")
+                err = errors.ErrorSerializer("Error", "Email or Password is incorrect")
                 return JsonResponse({err.Name:err.Error})
         else:
-            err = serializer.ErrorSerializer("Error", "User Not Exists")
+            err = errors.ErrorSerializer("Error", "User Not Exists")
             return JsonResponse({err.Name:err.Error})
     except :
-        err = serializer.ErrorSerializer("Error", "Data Error")
+        err = errors.ErrorSerializer("Error", "Data Error")
         return JsonResponse({err.Name:err.Error})

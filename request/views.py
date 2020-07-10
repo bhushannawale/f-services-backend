@@ -8,6 +8,7 @@ from provider.models import Provider
 from consumer.serializer import ConsumerSerializer
 from provider.serializer import ProviderSerializer
 from .models import Request
+from server import err as errors
 
 @api_view(['POST'])
 def create_request(request):
@@ -19,7 +20,7 @@ def create_request(request):
         else:
             return Response(req.errors)
     except :
-        err = serializer.ErrorSerializer("Error", "Data Error")
+        err = errors.ErrorSerializer("Error", "Data Error")
         return JsonResponse({err.Name: err.Error})
 
 
@@ -32,7 +33,7 @@ def same_request(request, request_id):
         serialized = serializer.RequestSerializer(req)
         return Response(serialized.data)
     except:
-        err = serializer.ErrorSerializer("Error", "Data Error")
+        err = errors.ErrorSerializer("Error", "Data Error")
         return JsonResponse({err.Name: err.Error})
 
 
@@ -47,7 +48,7 @@ def get_all_requests(request):
             req_list.append(serialized.data)
         return Response(req_list)
     except:
-        err = serializer.ErrorSerializer("Error", "Database Error")
+        err = errors.ErrorSerializer("Error", "Database Error")
         return JsonResponse({err.Name: err.Error})
 
 
@@ -62,7 +63,7 @@ def get_requests_by_consumer(request, id):
             req_list.append(serialized.data)
         return Response(req_list)
     except:
-        err = serializer.ErrorSerializer("Error", "Consumer not exists")
+        err = errors.ErrorSerializer("Error", "Consumer not exists")
         return JsonResponse({err.Name: err.Error})
 
 
@@ -77,7 +78,7 @@ def get_requests_by_provider(request, id):
             req_list.append(serialized.data)
         return Response(req_list)
     except:
-        err = serializer.ErrorSerializer("Error", "Provider not exists")
+        err = errors.ErrorSerializer("Error", "Provider not exists")
         return JsonResponse({err.Name: err.Error})
 
 
@@ -90,7 +91,7 @@ def accept_request(request, id):
         serialized = serializer.RequestSerializer(req)
         return Response(serialized.data)
     except:
-        err = serializer.ErrorSerializer("Error", "Request not exists")
+        err = errors.ErrorSerializer("Error", "Request not exists")
         return JsonResponse({err.Name: err.Error})
 
 @api_view(['DELETE'])
@@ -99,5 +100,5 @@ def delete_request_by_id(request, id):
         req = Request.objects.get(id=id, status=True).delete()
         return Response({"Result": "Request has been Deleted"})
     except:
-        err = serializer.ErrorSerializer("Error", "Request not exists")
+        err = errors.ErrorSerializer("Error", "Request not exists")
         return JsonResponse({err.Name: err.Error})

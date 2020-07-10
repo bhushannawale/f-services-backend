@@ -6,6 +6,7 @@ from rest_framework.decorators import api_view
 from .models import Booking
 from consumer.models import Consumer
 from provider.models import Provider
+from server import err as errors
 
 
 @api_view(['POST'])
@@ -18,7 +19,7 @@ def book(request):
         else:
             return Response(serialized.errors)
     except:
-        err = serializer.ErrorSerializer("Error", "Data Error")
+        err = errors.ErrorSerializer("Error", "Data Error")
         return JsonResponse({err.Name: err.Error})
 
 
@@ -33,7 +34,7 @@ def get_all_bookings(request):
             res_list.append(serialized.data)
         return Response(res_list)
     except:
-        err = serializer.ErrorSerializer("Error", "Database Fetching Error")
+        err = errors.ErrorSerializer("Error", "Database Fetching Error")
         return JsonResponse({err.Name: err.Error})
 
 
@@ -48,7 +49,7 @@ def get_by_consumer(request, id):
             res_list.append(serialized.data)
         return Response(res_list)
     except:
-        err = serializer.ErrorSerializer("Error", "Consumer not exists")
+        err = errors.ErrorSerializer("Error", "Consumer not exists")
         return JsonResponse({err.Name: err.Error})
 
 
@@ -63,5 +64,5 @@ def get_by_provider(request, id):
             res_list.append(serialized.data)
         return Response(res_list)
     except:
-        err = serializer.ErrorSerializer("Error", "Provider not exists")
+        err = errors.ErrorSerializer("Error", "Provider not exists")
         return JsonResponse({err.Name: err.Error})
